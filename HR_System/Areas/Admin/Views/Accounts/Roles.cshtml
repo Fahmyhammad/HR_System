@@ -1,0 +1,212 @@
+﻿@using HR_Domin
+@using HR_Domin.Constants
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationServic;
+
+@model RolesViewModel
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">تسيجل مجموعة المستخدمين</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="float-sm-right">
+                    <li class="">
+                        <a href="/Admin/Home/Index">الصفحة الرئيسية</a>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">المستخدمين</h3>
+                        <div class="card-tools">
+                            <!-- Button trigger modal -->
+                            @if (User.IsInRole(Helper.Admin))
+                            {
+                                <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="modal" data-target="#exampleModal" onclick="Rest()">
+                                    Add Roles
+                                </button>
+                            }
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <meta charset="utf-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>DataTable Example</title>
+                    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+
+                    <div class="card-body">
+                        <table id="tableRole" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    @if (User.IsInRole(Helper.Admin))
+                                    {
+                                        <th>الحدث</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Roles)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @item.Name
+                                        </td>
+                                        @if (User.IsInRole(Helper.Admin))
+                                        {
+                                            <td>
+                                                <input type="button" class="btn btn-outline-info" onclick="Edit('@item.Id','@item.Name')" value="تعديل" data-toggle="modal" data-target="#exampleModal" />
+                                                <input type="button" class="btn btn-outline-danger" onclick="Delete('@item.Id')" value="حذف" />
+                                                <a class="btn btn-outline-success btn-sm" asp-action="Index" asp-controller="Permissions" asp-route-RoleId="@item.Id">الصلحيات</a>
+                                            </td>
+                                        }
+                                    </tr>
+
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="#exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">اضافة صلاحية جديده</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="roleForm" method="post" asp-action="Roles" asp-controller="Accounts">
+                    <div class="form-group">
+                        <input class="form-control" hidden asp-for="NewRole.RoleId" type="text" id="roleId" />
+
+                        <label asp-for="NewRole.RoleName" class="control-lable">الاسم</label>
+                        <input class="form-control" asp-for="NewRole.RoleName" type="text" id="roleName" />
+                        <span asp-validation-for="NewRole.RoleName" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-success" value="حفظ" id="btnSave" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            $('#usersTable').DataTable();
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم الحفظ بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "خطأ",
+                        icon: "error",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+                                                });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["DeleteMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم الحذف بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+
+                                                        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["EditMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم التعديل بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+        else if (TempData["ErrorEdit"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: " لم يتم التعديل ",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+
+                                                                });
+    </script>
+}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="~/lib/jquery-validation/~/_Admin/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="~/Models/Roles.js"></script>
+}

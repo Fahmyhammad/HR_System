@@ -1,0 +1,353 @@
+﻿@using HR_Domin
+@model EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">تسيجل اسم الموظف</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="float-sm-right">
+                    <li class="">
+                        <a href="/Admin/Home/Index">الصفحة الرئيسية</a>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">الموظفين</h3>
+                        <div class="card-tools">
+                            @if (User.IsInRole(Helper.Admin) || User.IsInRole(Helper.Editor))
+                            {
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="modal" data-target="#exampleModal" onclick="Rest()">
+                                    اضافة موظف
+                                </button>
+                            }
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <meta charset="utf-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>DataTable Example</title>
+                    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="tableEmps" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>العنوان</th>
+                                    <th>الهاتف</th>
+                                    <th>النوع</th>
+                                    <th>الجنسية</th>
+                                    <th>تاريخ الميلاد</th>
+                                    <th>الرقم القومي</th>
+                                    @if (User.IsInRole(Helper.Admin) || User.IsInRole(Helper.Editor))
+                                    {
+                                        <th>الحدث</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Listemp)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.Address</td>
+                                        <td>@item.PhoneNumber</td>
+                                        <td>@item.Genders</td>
+                                        <td>@item.Nationality</td>
+                                        <td>@item.Date.ToString("yyyy-MM-dd")</td>
+                                        <td>@item.NationalID</td>
+                                        @if (User.IsInRole(Helper.Admin) || User.IsInRole(Helper.Editor))
+                                        {
+                                            <td>
+                                                <input type="button" class="btn btn-outline-info btn-sm" onclick="Edit('@item.Id','@item.Name','@item.Address','@item.PhoneNumber'
+                                            ,'@item.Genders','@item.Nationality','@item.Date','@item.NationalID'
+                                            ,'@item.RetirementDate','@item.Salary','@item.AttendanceTime','@item.DepartureDate')" value="تعديل" data-toggle="modal" data-target="#exampleModal" />
+                                                <input type="button" class="btn btn-outline-danger btn-sm" onclick="Delete('@item.Id')" value="حذف" />
+                                            </td>
+                                        }
+                                    </tr>
+
+                                }
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+
+
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">معلومات العمل</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <meta charset="utf-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>DataTable Example</title>
+                    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="tableEmpsPasns" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>الاسم</th>
+                                    <th>تاريخ التعاقد</th>
+                                    <th>سعر الساعة</th>
+                                    <th>الراتب</th>
+                                    <th>موعد الحضور</th>
+                                    <th>موعد الانصراف</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Listemp)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.RetirementDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.HourlyPrice</td>
+                                        <td>@item.Salary</td>
+                                    <td>@item.AttendanceTime.ToShortTimeString()</td>
+                                    <td>@item.DepartureDate.ToShortTimeString()</td>
+                                    </tr>
+
+                                }
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="#exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">اضافة مستخدم جديد</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="empForm" method="post" asp-action="AddEmployee" asp-controller="Employees">
+                    <div class="form-group">
+                        <input class="form-control" hidden asp-for="NewEmployee.Id" type="text" id="userId" />
+
+                        <label asp-for="NewEmployee.Name" class="control-lable">الاسم</label>
+                        <input class="form-control" asp-for="NewEmployee.Name" type="text" id="userName" />
+                        <span asp-validation-for="NewEmployee.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.Address" class="control-lable">العنوان</label>
+                        <input class="form-control" asp-for="NewEmployee.Address" type="text" id="addressEmp" />
+                        <span asp-validation-for="NewEmployee.Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.PhoneNumber" class="control-lable">الهاتف</label>
+                        <input class="form-control" asp-for="NewEmployee.PhoneNumber" type="text" id="phoneEmp" />
+                        <span asp-validation-for="NewEmployee.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.Genders" class="control-lable">النوع</label>
+                        <select class="form-control" asp-for="NewEmployee.Genders" id="genderEmp">
+                            <option value=""> --اختر النوع -- </option>
+                            <option value="male">ذكر</option>
+                            <option value="female">انثى</option>
+                        </select>
+                        <span asp-validation-for="NewEmployee.Genders" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.Nationality" class="control-lable">الجنسية</label>
+                        <input class="form-control" asp-for="NewEmployee.Nationality" type="text" id="nationalityEmp" />
+                        <span asp-validation-for="NewEmployee.Nationality" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.Date" class="control-lable">تاريخ الميلاد</label>
+                        <input class="form-control" asp-for="NewEmployee.Date" type="date" id="dateEmp" />
+                        <span asp-validation-for="NewEmployee.Date" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.NationalID" class="control-lable">الرقم القومي</label>
+                        <input class="form-control" asp-for="NewEmployee.NationalID" type="text" id="nationalIDEmp" />
+                        <span asp-validation-for="NewEmployee.NationalID" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.HourlyPrice" class="control-lable">سعر الساعة</label>
+                        <input class="form-control" asp-for="NewEmployee.HourlyPrice" type="number" id="HourlyPriceEmp" />
+                        <span asp-validation-for="NewEmployee.HourlyPrice" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.RetirementDate" class="control-lable">تاريخ التعاقد</label>
+                        <input class="form-control" asp-for="NewEmployee.RetirementDate" type="date" id="retirementDateEmp" />
+                        <span asp-validation-for="NewEmployee.RetirementDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.Salary" class="control-lable">الراتب</label>
+                        <input class="form-control" asp-for="NewEmployee.Salary" type="number" id="salaryEmp" />
+                        <span asp-validation-for="NewEmployee.Salary" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.AttendanceTime" class="control-lable">الحضور</label>
+                        <input class="form-control" asp-for="NewEmployee.AttendanceTime" type="time" id="attendanceTimeEmp" />
+                        <span asp-validation-for="NewEmployee.AttendanceTime" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NewEmployee.DepartureDate" class="control-lable">الانصراف</label>
+                        <input class="form-control" asp-for="NewEmployee.DepartureDate" type="time" id="departureDateEmp" />
+                        <span asp-validation-for="NewEmployee.DepartureDate" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-success" value="حفظ" id="btnSave" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            $('#tableEmps').DataTable({
+                "autoWidth": false,
+                "responsive": true
+            });
+        });
+
+        $(document).ready(function () {
+            $('#tableEmpsPasns').DataTable({
+                "autoWidth": false,
+                "responsive": true
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم الحفظ بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "خطأ",
+                        icon: "error",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+                                                                });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["DeleteMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم الحذف بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+
+                                                                        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["EditMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم التعديل بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+        else if (TempData["ErrorEdit"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: " لم يتم التعديل ",
+                        icon: "error",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+
+                                                                                });
+    </script>
+}
+<script src="~/lib/jquery-validation/~/_Admin/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate.unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="~/Models/Employee.js"></script>
+}

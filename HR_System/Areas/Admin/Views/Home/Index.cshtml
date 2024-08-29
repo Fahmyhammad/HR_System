@@ -1,0 +1,88 @@
+﻿<!-- Content Wrapper. Contains page content -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<!-- Content Header (Page header) -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark">لوحة التحكم</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="/Admin/Home/Index">الصفحة الرئيسية</a></li>
+                    <li class="breadcrumb-item active">لوحة التحكم</li>
+                </ol>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <!-- New Orders -->
+            <!-- New Orders -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.CountAttendanceTime</h3>
+                        <p>معدل الحضور</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-calendar-check"></i> <!-- أيقونة Font Awesome جديدة -->
+                    </div>
+                    <a href="/Admin/Absence/Index" class="small-box-footer">مزيد من المعلومات <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Bounce Rate -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@ViewBag.ListEmployees</h3>
+                        <p>الموظفين</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-users"></i> <!-- أيقونة Font Awesome جديدة -->
+                    </div>
+                    <a href="/Admin/Employees/Index" class="small-box-footer">مزيد من المعلومات <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- User Registrations -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>@ViewBag.ListUsers</h3>
+                        <p>تسجيلات المستخدمين</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-user-plus"></i> <!-- أيقونة Font Awesome جديدة -->
+                    </div>
+                    <a href="/Admin/Accounts/Register" class="small-box-footer">مزيد من المعلومات <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Unique Visitors -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@ViewBag.CountTheAudience</h3>
+                        <p>معدل الغياب</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-chart-pie"></i> <!-- أيقونة Font Awesome جديدة -->
+                    </div>
+                    <a href="/Admin/Absence/Index" class="small-box-footer">مزيد من المعلومات <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.row (main row) -->
+    </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+<!-- /.content-wrapper -->

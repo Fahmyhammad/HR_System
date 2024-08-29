@@ -1,0 +1,261 @@
+﻿@using HR_Domin
+@model AbsenceViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-dark"> الحضور و الانصراف للموظف</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="float-sm-right">
+                    <li class="">
+                        <a href="/Admin/Home/Index">الصفحة الرئيسية</a>
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">الحضور و الانصراف</h3>
+                        <div class="card-tools">
+                            @if (User.IsInRole(Helper.Admin) || User.IsInRole(Helper.Editor))
+                            {
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-outline-primary rounded-pill" data-toggle="modal" data-target="#exampleModal" onclick="Rest()">
+                                    تسجيل غياب الموظف
+                                </button>
+                            }
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <meta charset="utf-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>DataTable Example</title>
+                    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="tableAbsence" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>القسم</th>
+                                    <th>اسم الموظف</th>
+                                    <th>الغياب</th>
+                                    <th>واقت الحضور</th>
+                                    <th>واقت الانصراف</th>
+                                    <th>التاريخ</th>
+                                    @if (User.IsInRole(Helper.Admin) || User.IsInRole(Helper.Editor))
+                                    {
+                                        <th>الحدث</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.absenceList)
+                                {
+                                    <tr>
+                                        <td>@item.Department</td>
+                                        <td>@item.employee.Name</td>
+                                        <td>@item.theAudience</td>
+                                        <td>@item.AttendanceTime.ToShortTimeString()</td>
+                                        <td>@item.DepartureDate.ToShortTimeString()</td>
+                                        <td>@item.dateTime.ToString("ddd, yyyy-MM-dd")</td>
+                                        @if (User.IsInRole(Helper.Admin) || User.IsInRole(Helper.Editor))
+                                        {
+                                            <td>
+                                                <input type="button" class="btn btn-outline-info btn-sm" onclick="Edit('@item.Id','@item.Department','@item.theAudience','@item.employee.Name','@item.AttendanceTime'
+                                            ,'@item.DepartureDate','@item.dateTime')" value="تعديل" data-toggle="modal" data-target="#exampleModal" />
+                                                <input type="button" class="btn btn-outline-danger btn-sm" onclick="Delete('@item.Id')" value="حذف" />
+                                            </td>
+                                        }
+                                    </tr>
+
+                                }
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </section>
+    <!-- /.content -->
+</div>
+
+
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="#exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="title">تسجبل الحضور و الانصراف</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="empForm" method="post" asp-action="AddAbsence" asp-controller="Absence">
+                    <div class="form-group">
+                        <input class="form-control" hidden asp-for="absence.Id" type="text" id="userId" />
+
+                        <label asp-for="absence.Department" class="control-lable">القسم</label>
+                        <input class="form-control" asp-for="absence.Department" type="text" id="deptEmp" />
+                        <span asp-validation-for="absence.Department" class="text-danger"></span>
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="absence.employeeId" class="form-label">اسم الموظف</label>
+                        <select asp-for="absence.employeeId" class="form-control" asp-items="Model.listItems" id="nameEmps">
+                            <option disabled selected>--Select Employee--</option>
+                        </select>
+                        <span asp-validation-for="absence.employeeId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="absence.theAudience" class="control-lable">الغياب</label>
+                        <select class="form-control" asp-for="absence.theAudience" id="theAudienceEmp">
+                            <option value=""> --اختر الحالة -- </option>
+                            <option value="حضور">حضور</option>
+                            <option value="غياب">غياب</option>
+                        </select>
+                        <span asp-validation-for="absence.theAudience" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="absence.AttendanceTime" class="control-lable">وقت الحضور</label>
+                        <input class="form-control" asp-for="absence.AttendanceTime" type="time" id="AttendanceEmp" />
+                        <span asp-validation-for="absence.AttendanceTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="absence.DepartureDate" class="control-lable">وقت الانصراف</label>
+                        <input class="form-control" asp-for="absence.DepartureDate" type="time" id="DepartureEmp" />
+                        <span asp-validation-for="absence.DepartureDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="absence.dateTime" class="control-lable">التاريخ</label>
+                        <input class="form-control" asp-for="absence.dateTime" type="date" id="dateEmp" />
+                        <span asp-validation-for="absence.dateTime" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-success" value="حفظ" id="btnSave" />
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            $('#tableAbsence').DataTable({
+                "autoWidth": false,
+                "responsive": true
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم الحفظ بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "خطأ",
+                        icon: "error",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+                                                                                        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["DeleteMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم الحذف بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+
+                                                                                                });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @if (TempData["EditMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: "تم التعديل بنجاح",
+                        icon: "success",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+        else if (TempData["ErrorEdit"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        title: " لم يتم التعديل ",
+                        icon: "error",
+                        confirmButtonText: "حسنًا"
+                    });
+            </text>
+        }
+
+
+                                                                                                        });
+    </script>
+}
+<script src="~/lib/jquery-validation/~/_Admin/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.2/jquery.validate.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate.unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+
+<script src="~/Models/Absence.js"></script>
+}
